@@ -38,19 +38,26 @@ cfg_if! {
     } else if #[cfg(target_arch = "mips64")] {
         pub use mips64::*;
     } else {
-        // Unimplemented architecture:
-        #[doc(hidden)]
-        pub(crate) enum Feature {
-            Null
-        }
-        #[doc(hidden)]
-        pub mod __is_feature_detected {}
+        #[cfg(not(bootstrap))]
+        cfg_if! {
+            if #[cfg(target_arch = "morello+c64")] {
+                pub use aarch64::*;
+            } else {
+                // Unimplemented architecture:
+                #[doc(hidden)]
+                pub(crate) enum Feature {
+                    Null
+                }
+                #[doc(hidden)]
+                pub mod __is_feature_detected {}
 
-        impl Feature {
-            #[doc(hidden)]
-            pub(crate) fn from_str(_s: &str) -> Result<Feature, ()> { Err(()) }
-            #[doc(hidden)]
-            pub(crate) fn to_str(self) -> &'static str { "" }
+                impl Feature {
+                    #[doc(hidden)]
+                    pub(crate) fn from_str(_s: &str) -> Result<Feature, ()> { Err(()) }
+                    #[doc(hidden)]
+                    pub(crate) fn to_str(self) -> &'static str { "" }
+                }
+            }
         }
     }
 }

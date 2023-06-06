@@ -13,10 +13,27 @@ cfg_if::cfg_if! {
         mod powerpc;
         pub(crate) use self::powerpc::detect_features;
     } else {
-        use crate::detect::cache;
-        /// Performs run-time feature detection.
-        pub(crate) fn detect_features() -> cache::Initializer {
-            cache::Initializer::default()
+        #[cfg(not(bootstrap))]
+        cfg_if::cfg_if! {
+            if #[cfg(target_arch = "morello+c64")] {
+                mod aarch64;
+                pub(crate) use self::aarch64::detect_features;
+            } else {
+                use crate::detect::cache;
+                /// Performs run-time feature detection.
+                pub(crate) fn detect_features() -> cache::Initializer {
+                    cache::Initializer::default()
+                }
+            }
+        }
+        cfg_if::cfg_if! {
+            if #[cfg(bootstrap)] {
+                use crate::detect::cache;
+                /// Performs run-time feature detection.
+                pub(crate) fn detect_features() -> cache::Initializer {
+                    cache::Initializer::default()
+                }
+            }
         }
     }
 }

@@ -9,6 +9,8 @@
     allow(dead_code)
 )]
 
+#![cfg_attr(not(bootstrap), cfg_attr(target_arch = "morello+c64", allow(dead_code)))]
+
 /// Key to access the CPU Hardware capabilities bitfield.
 pub(crate) const AT_HWCAP: usize = 25;
 /// Key to access the CPU Hardware capabilities 2 bitfield.
